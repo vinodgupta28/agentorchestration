@@ -1,0 +1,39 @@
+# LangChain Core
+langchain
+langchain-core
+langchain-community
+
+# Google Gemini
+langchain-google-genai
+google-generativeai
+
+# Anthropic (optional)
+langchain-anthropic
+
+# Hugging Face
+langchain-huggingface
+transformers
+huggingface-hub
+sentence-transformers
+
+# Environment variables
+python-dotenv
+
+# ML utilities
+numpy
+scikit-learn
+
+# PDF handling
+pypdf
+pymupdf
+
+# Vector Store
+faiss-cpu
+
+# Search tools
+wikipedia
+duckduckgo-search
+arxiv
+
+# UI
+streamlit
