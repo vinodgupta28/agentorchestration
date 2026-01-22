@@ -1,21 +1,9 @@
-from google import genai
-import os
+from simple_agent import SimpleAgent
 
-API_KEY = os.getenv("GOOGLE_API_KEY")
+research_agent = SimpleAgent("Research Agent")
 
-if not API_KEY:
-    raise ValueError("GOOGLE_API_KEY not set in environment variables")
+def run_agent(agent_type: str, text: str) -> str:
+    if agent_type == "research":
+        return research_agent.run(text)
 
-client = genai.Client(api_key=API_KEY)
-
-MODEL_NAME = "models/gemini-flash-latest"
-
-
-def run_agent(system_prompt: str, user_input: str) -> str:
-    prompt = f"{system_prompt}\n\n{user_input}"
-
-    response = client.models.generate_content(
-        model=MODEL_NAME,
-        contents=prompt
-    )
-    return response.text
+    return "Invalid agent type"

@@ -1,35 +1,28 @@
 from google import genai
 import os
 
-# Read API key from environment variable
-API_KEY = os.getenv("GOOGLE_API_KEY")
-
-if not API_KEY:
-    raise ValueError("GOOGLE_API_KEY not found in environment variables")
-
-# Configure the client
-client = genai.Client(api_key=API_KEY)
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 class SimpleAgent:
-    def __init__(self, system_prompt: str):
-        self.system_prompt = system_prompt
-        self.model_name = "models/gemini-flash-latest"
+    def __init__(self, role: str):
+        self.role = role
+        self.model = "models/gemini-flash-latest"
 
-    def run(self, input_text: str) -> str:
-        # Combine system prompt + user input
-        prompt = f"{self.system_prompt}\n\n{input_text}"
+    def run(self, user_input: str) -> str:
+        prompt = f"""
+You are a {self.role}.
 
-        # Generate content
+Task:
+- Understand the topic
+- Explain it clearly
+- Use simple language
+- Give examples if possible
+
+User question:
+{user_input}
+"""
         response = client.models.generate_content(
-            model=self.model_name,
+            model=self.model,
             contents=prompt
         )
         return response.text
-
-
-# ===== Example usage =====
-if __name__ == "__main__":
-    agent = SimpleAgent("You are a helpful assistant.")
-    result = agent.run("Say hello in one sentence")
-    print("Response from Gemini API:")
-    print(result)
