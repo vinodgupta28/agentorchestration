@@ -1,35 +1,30 @@
 import streamlit as st
-from api import run_agent
+from api import run_multi_agent
 
 st.set_page_config(page_title="🤖 Agent Orchestration", layout="wide")
 
-st.title("🤖 Agent Orchestration")
+st.title("🤖 Agent Orchestration ")
+st.caption(" Research → Summary → Email")
 
-tabs = st.tabs(["Research", "Summary", "Email"])
+topic = st.text_area(
+    "Enter topic",
+    height=120
+)
 
-def render_tab(task_name, system_prompt):
-    with st.container():
-        st.subheader(f"{task_name} Agent")
+if st.button("Run "):
+    if not topic.strip():
+        st.warning("Please enter a topic")
+    else:
+        with st.spinner("Agents thinking with memory..."):
+            memory = run_multi_agent(topic)
 
-        text = st.text_area(
-            "Enter your text",
-            height=200,
-            key=f"text_{task_name}"
-        )
+        tab1, tab2, tab3 = st.tabs([" Research", " Summary", " Email"])
 
-        if st.button("Run", key=f"btn_{task_name}"):
-            with st.spinner("Running agent..."):
-                output = run_agent(system_prompt, text)
+        with tab1:
+            st.text_area("Research", memory["research"], height=350)
 
-            st.success(f"{task_name} agent executed successfully!")
-            st.markdown("### Output:")
-            st.write(output)
+        with tab2:
+            st.text_area("Summary", memory["summary"], height=250)
 
-with tabs[0]:
-    render_tab("Research", "You are a research assistant.")
-
-with tabs[1]:
-    render_tab("Summary", "Summarize the following text.")
-
-with tabs[2]:
-    render_tab("Email", "Write a professional email.")
+        with tab3:
+            st.text_area("Email", memory["email"], height=250)
