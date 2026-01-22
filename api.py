@@ -1,27 +1,21 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from app import run_agents  # Your actual backend logic
+from google import genai
+import os
 
-app = FastAPI(title="Agent Orchestration API")
+API_KEY = os.getenv("GOOGLE_API_KEY")
 
-# -----------------------------
-# Request Body Model
-# -----------------------------
-class RequestBody(BaseModel):
-    topic: str
+if not API_KEY:
+    raise ValueError("GOOGLE_API_KEY not set in environment variables")
 
-# -----------------------------
-# API Endpoint
-# -----------------------------
-@app.post("/run-agents")
-def run_agent_api(request: RequestBody):
-    """
-    API endpoint to run the agent.
-    Returns a dictionary with keys: research, summary, email.
-    """
-    try:
-        # Call the backend function directly
-        data = run_agents(request.topic)  # Must return dict {"research":..., "summary":..., "email":...}
-        return data
-    except Exception as e:
-        return {"error": str(e)}
+client = genai.Client(api_key=API_KEY)
+
+MODEL_NAME = "models/gemini-flash-latest"
+
+
+def run_agent(system_prompt: str, user_input: str) -> str:
+    prompt = f"{system_prompt}\n\n{user_input}"
+
+    response = client.models.generate_content(
+        model=MODEL_NAME,
+        contents=prompt
+    )
+    return response.text

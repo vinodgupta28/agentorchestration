@@ -1,8 +1,11 @@
 from google import genai
 import os
 
-#  Use environment variable or hardcode for testing
-API_KEY = os.getenv("AIzaSyCgH1b9tAENsJyP4J9FZB4NLNYfefOdgiw") 
+# Read API key from environment variable
+API_KEY = os.getenv("GOOGLE_API_KEY")
+
+if not API_KEY:
+    raise ValueError("GOOGLE_API_KEY not found in environment variables")
 
 # Configure the client
 client = genai.Client(api_key=API_KEY)
@@ -10,7 +13,7 @@ client = genai.Client(api_key=API_KEY)
 class SimpleAgent:
     def __init__(self, system_prompt: str):
         self.system_prompt = system_prompt
-        self.model_name = "models/gemini-flash-latest"  # ✅ correct model for generate_content
+        self.model_name = "models/gemini-flash-latest"
 
     def run(self, input_text: str) -> str:
         # Combine system prompt + user input
