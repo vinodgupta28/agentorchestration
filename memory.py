@@ -1,9 +1,6 @@
-class Memory:
-    def __init__(self):
-        self.store = {}
+from langchain_community.memory import ConversationBufferMemory
 
-    def save(self, key: str, value: str):
-        self.store[key] = value
-
-    def get(self, key: str):
-        return self.store.get(key, "")
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)

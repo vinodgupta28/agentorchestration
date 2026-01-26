@@ -1,30 +1,64 @@
 import streamlit as st
-from api import run_multi_agent
+from api import run_multi_agent_workflow
 
-st.set_page_config(page_title="🤖 Agent Orchestration", layout="wide")
-
-st.title("🤖 Agent Orchestration ")
-st.caption(" Research → Summary → Email")
-
-topic = st.text_area(
-    "Enter topic",
-    height=120
+st.set_page_config(
+    page_title="LangChain Multi-Agent Orchestration",
+    layout="wide"
 )
 
-if st.button("Run "):
-    if not topic.strip():
-        st.warning("Please enter a topic")
-    else:
-        with st.spinner("Agents thinking with memory..."):
-            memory = run_multi_agent(topic)
+st.title("🤖 LangChain Multi-Agent Orchestration System")
+st.caption("Research → Critic → Summary → Email → Images")
 
-        tab1, tab2, tab3 = st.tabs([" Research", " Summary", " Email"])
+st.divider()
 
-        with tab1:
-            st.text_area("Research", memory["research"], height=350)
+topic = st.text_area(
+    "📌 Enter Topic",
+    placeholder="Enter topic once. All agents will run automatically...",
+    height=100
+)
 
-        with tab2:
-            st.text_area("Summary", memory["summary"], height=250)
+run = st.button("🚀 Run Agents")
 
-        with tab3:
-            st.text_area("Email", memory["email"], height=250)
+
+# 🔥 helper function to clean agent output
+def clean_output(output):
+    if isinstance(output, list):
+        # Gemini / LangChain structured response case
+        return output[0].get("text", "")
+    return output
+
+
+if run and topic.strip():
+
+    with st.status("Running multi-agent workflow...", expanded=True):
+        outputs = run_multi_agent_workflow(topic)
+
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(
+        ["🔍 Research", "🧪 Critic", "📝 Summary", "✉️ Email", "🖼 Images"]
+    )
+
+    with tab1:
+        st.subheader("Research Output")
+        st.markdown(clean_output(outputs["research"]))
+
+    with tab2:
+        st.subheader("Critic Review")
+        st.markdown(clean_output(outputs["critic"]))
+
+    with tab3:
+        st.subheader("Summary")
+        st.markdown(clean_output(outputs["summary"]))
+
+    with tab4:
+        st.subheader("Professional Email")
+        st.markdown(clean_output(outputs["email"]))
+
+    with tab5:
+        st.subheader("Images")
+        st.image(
+            "https://via.placeholder.com/400x250.png?text=AI+Image+Agent",
+            caption="Future Image Agent"
+        )
+
+elif run:
+    st.warning("⚠️ Please enter a topic")
