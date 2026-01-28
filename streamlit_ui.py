@@ -1,64 +1,148 @@
 import streamlit as st
-from api import run_multi_agent_workflow
+from app import orchestrator
+import os
 
+# ---------------- PAGE CONFIG ----------------
 st.set_page_config(
-    page_title="LangChain Multi-Agent Orchestration",
+    page_title="Gemini Multi-Agent Research System",
     layout="wide"
 )
 
-st.title("🤖 LangChain Multi-Agent Orchestration System")
-st.caption("Research → Critic → Summary → Email → Images")
+# ---------------- CSS ----------------
+st.markdown("""
+<style>
+.header-text {
+    color: black;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+}
+.hero-image {
+    height: 100px;
+    object-fit: cover;
+    width: 25%;
+}
+.css-18e3th9 {
+    background-color: transparent;
+}
+.main { background-color: #f7f9fc; }
+.block-container { padding-top: 2rem; }
+.hero {
+    background: linear-gradient(90deg, #eef2ff, #f8fafc);
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+}
+.section {
+    background-color: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+</style>
+""", unsafe_allow_html=True)
 
-st.divider()
+# ---------------- HEADER ----------------
+st.markdown('<h1 class="header-text">🤖 Gemini Multi-Agent Research System</h1>', unsafe_allow_html=True)
+st.markdown('<p class="header-text">Research • Critic • Fact-Check • Insights • Summary • Email</p>', unsafe_allow_html=True)
 
-topic = st.text_area(
-    "📌 Enter Topic",
-    placeholder="Enter topic once. All agents will run automatically...",
-    height=100
-)
+# ---------------- HERO IMAGE ----------------
+local_image_path = "72958382-f2d4-4007-a898-2330db6650b9.png"
 
-run = st.button("🚀 Run Agents")
-
-
-# 🔥 helper function to clean agent output
-def clean_output(output):
-    if isinstance(output, list):
-        # Gemini / LangChain structured response case
-        return output[0].get("text", "")
-    return output
-
-
-if run and topic.strip():
-
-    with st.status("Running multi-agent workflow...", expanded=True):
-        outputs = run_multi_agent_workflow(topic)
-
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(
-        ["🔍 Research", "🧪 Critic", "📝 Summary", "✉️ Email", "🖼 Images"]
+if os.path.exists(local_image_path):
+    st.image(local_image_path, use_column_width=True, output_format="PNG")
+else:
+    # Fallback online image
+    st.image(
+        "https://images.unsplash.com/photo-1677442136019-21780ecad995",
+        use_column_width=True,
+        caption="AI-powered Multi-Agent Orchestration"
     )
 
-    with tab1:
-        st.subheader("Research Output")
-        st.markdown(clean_output(outputs["research"]))
+# ---------------- INPUT SECTION ----------------
+with st.container():
+    st.markdown("<div class='section'>", unsafe_allow_html=True)
 
-    with tab2:
-        st.subheader("Critic Review")
-        st.markdown(clean_output(outputs["critic"]))
+    topic = st.text_input(
+        "🔎 Enter Research Topic",
+        placeholder="What is Artificial Intelligence?"
+    )
 
-    with tab3:
-        st.subheader("Summary")
-        st.markdown(clean_output(outputs["summary"]))
+    run = st.button("🚀 Start Research")
 
-    with tab4:
-        st.subheader("Professional Email")
-        st.markdown(clean_output(outputs["email"]))
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    with tab5:
-        st.subheader("Images")
-        st.image(
-            "https://via.placeholder.com/400x250.png?text=AI+Image+Agent",
-            caption="Future Image Agent"
-        )
+# ---------------- RUN AGENTS ----------------
+if run and topic.strip():
+    with st.spinner("🤝 Gemini agents collaborating..."):
+        output = orchestrator(topic)
+
+    tabs = st.tabs([
+        "🔍 Research",
+        "🧠 Critic Review",
+        "🔗 Sources",
+        "✅ Fact Check",
+        "📊 Insights",
+        "📄 Summary",
+        "✉️ Email",
+        "🏷️ Titles",
+        "🖼 Visual"
+    ])
+
+    with tabs[0]:
+        st.markdown("<div class='section'>", unsafe_allow_html=True)
+        st.write(output["research"])
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with tabs[1]:
+        st.markdown("<div class='section'>", unsafe_allow_html=True)
+        st.write(output["critic"])
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with tabs[2]:
+        st.markdown("<div class='section'>", unsafe_allow_html=True)
+        for s in output["sources"]:
+            st.markdown(f"- [{s['title']}]({s['url']})")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with tabs[3]:
+        st.markdown("<div class='section'>", unsafe_allow_html=True)
+        st.write(output["fact_check"])
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with tabs[4]:
+        st.markdown("<div class='section'>", unsafe_allow_html=True)
+        st.write(output["insights"])
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with tabs[5]:
+        st.markdown("<div class='section'>", unsafe_allow_html=True)
+        st.write(output["summary"])
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with tabs[6]:
+        st.markdown("<div class='section'>", unsafe_allow_html=True)
+        email_output = output["email"]
+        email_text = email_output.get("text", "") if isinstance(email_output, dict) else email_output
+        st.markdown(email_text)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with tabs[7]:
+        st.markdown("<div class='section'>", unsafe_allow_html=True)
+        st.write(output["titles"])
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with tabs[8]:
+        st.markdown("<div class='section'>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(
+                "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
+                width=500,
+                caption="Multi-Agent AI Collaboration"
+            )
+        st.info("🧠 Visual representation of agent collaboration (Gemini Vision ready)")
+        st.markdown("</div>", unsafe_allow_html=True)
 
 elif run:
     st.warning("⚠️ Please enter a topic")
