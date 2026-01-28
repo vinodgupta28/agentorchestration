@@ -1,6 +1,5 @@
 import streamlit as st
 from app import orchestrator
-import os
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
@@ -13,29 +12,20 @@ st.markdown("""
 <style>
 .header-text {
     color: black;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: bold;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
 }
-.hero-image {
-    height: 100px;
-    object-fit: cover;
-    width: 25%;
-}
-.css-18e3th9 {
-    background-color: transparent;
+.sub-text {
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 10px;
 }
 .main { background-color: #f7f9fc; }
-.block-container { padding-top: 2rem; }
-.hero {
-    background: linear-gradient(90deg, #eef2ff, #f8fafc);
-    padding: 30px;
-    border-radius: 16px;
-    margin-bottom: 30px;
-}
+.block-container { padding-top: 1.5rem; }
+
 .section {
     background-color: white;
-    padding: 25px;
+    padding: 20px;
     border-radius: 14px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
@@ -43,34 +33,23 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------- HEADER ----------------
-st.markdown('<h1 class="header-text">🤖 Gemini Multi-Agent Research System</h1>', unsafe_allow_html=True)
-st.markdown('<p class="header-text">Research • Critic • Fact-Check • Insights • Summary • Email</p>', unsafe_allow_html=True)
+st.markdown("<h1 class='header-text'>🤖 Gemini Multi-Agent Research System</h1>", unsafe_allow_html=True)
+st.markdown(
+    "<p class='sub-text'>Research • Critic • Fact-Check • Insights • Summary • Email</p>",
+    unsafe_allow_html=True
+)
 
-# ---------------- HERO IMAGE ----------------
-local_image_path = "72958382-f2d4-4007-a898-2330db6650b9.png"
+# ---------------- INPUT SECTION (NO SCROLL) ----------------
+st.markdown("<div class='section'>", unsafe_allow_html=True)
 
-if os.path.exists(local_image_path):
-    st.image(local_image_path, use_column_width=True, output_format="PNG")
-else:
-    # Fallback online image
-    st.image(
-        "https://images.unsplash.com/photo-1677442136019-21780ecad995",
-        use_column_width=True,
-        caption="AI-powered Multi-Agent Orchestration"
-    )
+topic = st.text_input(
+    "🔎 Enter Research Topic",
+    placeholder="What is Artificial Intelligence?"
+)
 
-# ---------------- INPUT SECTION ----------------
-with st.container():
-    st.markdown("<div class='section'>", unsafe_allow_html=True)
+run = st.button("🚀 Start Research")
 
-    topic = st.text_input(
-        "🔎 Enter Research Topic",
-        placeholder="What is Artificial Intelligence?"
-    )
-
-    run = st.button("🚀 Start Research")
-
-    st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------------- RUN AGENTS ----------------
 if run and topic.strip():
@@ -134,14 +113,11 @@ if run and topic.strip():
 
     with tabs[8]:
         st.markdown("<div class='section'>", unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.image(
-                "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
-                width=500,
-                caption="Multi-Agent AI Collaboration"
-            )
-        st.info("🧠 Visual representation of agent collaboration (Gemini Vision ready)")
+        st.image(
+            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
+            width=400,
+            caption="Multi-Agent AI Collaboration"
+        )
         st.markdown("</div>", unsafe_allow_html=True)
 
 elif run:
