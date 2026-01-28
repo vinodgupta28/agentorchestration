@@ -1,23 +1,32 @@
 from langchain_core.prompts import PromptTemplate
 
+# ---------------- RESEARCH PROMPT ----------------
 RESEARCH_PROMPT = PromptTemplate(
     input_variables=["topic"],
     template="""
-You are a research assistant.
-Do deep research on the topic below.
-Use bullet points and examples.
+You are a professional research analyst.
+
+Do deep research on the topic below and write the output
+in well-structured paragraphs (NOT bullet points).
+
+Guidelines:
+- Clear explanation
+- Real-world examples
+- Technical + practical view
+- Easy to understand language
 
 Topic:
 {topic}
 """
 )
 
+# ---------------- CRITIC PROMPT ----------------
 CRITIC_PROMPT = PromptTemplate(
     input_variables=["research", "topic"],
     template="""
 You are a Quality Assurance Analyst.
 
-Evaluate the research below.
+Analyze the research content strictly.
 
 Research:
 {research}
@@ -25,28 +34,38 @@ Research:
 Topic:
 {topic}
 
-Respond ONLY in JSON:
-{{
+Respond ONLY in valid JSON format:
+{
   "is_sufficient": true or false,
-  "feedback": "what is missing or how to improve"
-}}
+  "feedback": "clear improvement suggestions in text"
+}
 """
 )
 
+# ---------------- SUMMARY PROMPT ----------------
 SUMMARY_PROMPT = PromptTemplate(
     input_variables=["research"],
     template="""
-Summarize the following research clearly:
+Create a clear, concise summary in paragraph form
+from the research below:
 
 {research}
 """
 )
 
+# ---------------- EMAIL PROMPT ----------------
 EMAIL_PROMPT = PromptTemplate(
     input_variables=["summary"],
     template="""
-Write a professional email based on the summary below:
+Write a professional and formal email
+based on the summary below.
 
+The email should:
+- Have a greeting
+- Clearly explain the topic
+- End with a polite closing
+
+Summary:
 {summary}
 """
 )
