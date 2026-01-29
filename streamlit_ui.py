@@ -1,18 +1,6 @@
 import streamlit as st
+from app import orchestrator
 import os
-
-def run_multi_agent_workflow(topic):
-    # Dummy example — replace with real agent logic
-    return {
-        "research": [f"Research result for: {topic}"],
-        "critic": f"Critic review for: {topic}",
-        "sources": [{"title": "Example Source", "url": "https://example.com"}],
-        "fact_check": f"Fact check for: {topic}",
-        "insights": [f"Insight 1 about {topic}", f"Insight 2 about {topic}"],
-        "summary": f"Summary of {topic}",
-        "email": {"text": f"Email draft regarding {topic}"},
-        "titles": [f"Title suggestion for {topic}"]
-    }
 
 def normalize_text(data):
     if data is None:
@@ -131,8 +119,7 @@ with st.container():
 # ---------------- RUN AGENTS ----------------
 if run and topic.strip():
     with st.spinner("Groq agents collaborating..."):
-        output = run_multi_agent_workflow(topic)
-
+        output = orchestrator(topic)
 
     tabs = st.tabs([
         "🔍 Research",
