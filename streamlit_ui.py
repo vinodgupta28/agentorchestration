@@ -1,5 +1,4 @@
 import streamlit as st
-from app import orchestrator
 import os
 
 def normalize_text(data):
